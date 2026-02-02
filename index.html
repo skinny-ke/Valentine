@@ -1,0 +1,616 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>A Special Surprise ❤️</title>
+    <style>
+        :root{
+            --accent:#d63384;
+            --muted:#f0cfe0;
+            --card-bg: rgba(255,255,255,0.96);
+            --text: #3a0b2e;
+            --action: #ff4d80;
+        }
+
+        /* Respect reduced motion preference */
+        @media (prefers-reduced-motion: reduce) {
+            * { transition: none !important; animation: none !important; }
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(-45deg, #ff9a9e, #fad0c4, #fbc2eb, #a1c4fd);
+            background-size: 400% 400%;
+            animation: gradient 10s ease infinite;
+            font-family: 'Arial Rounded MT Bold', 'Helvetica Neue', Arial, sans-serif;
+            overflow-x: hidden;
+            padding: 20px;
+        }
+
+        @keyframes gradient {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        #card {
+            background: var(--card-bg);
+            padding: clamp(20px, 5vw, 40px);
+            border-radius: 30px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.2);
+            text-align: center;
+            width: 100%;
+            max-width: 450px;
+            z-index: 10;
+            position: relative;
+            transition: transform 0.35s ease, opacity 0.35s ease;
+        }
+
+        .media-box {
+            width: 100%;
+            border-radius: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            background-color: #000;
+        }
+
+        h1 {
+            color: #d63384;
+            font-size: clamp(1.5rem, 6vw, 2.2rem);
+            margin-bottom: 25px;
+        }
+
+        .btn-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 20px;
+            min-height: 100px;
+            position: relative;
+        }
+
+        /* Buttons: ripple + accessibility friendly */
+        button {
+            padding: 15px 35px;
+            font-size: 1.2rem;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: transform 0.2s, background-color 0.3s;
+            touch-action: manipulation;
+            position: relative;
+            overflow: hidden;
+        }
+
+        button:hover {
+            background-color: #ff6f8e;
+            transform: scale(1.05);
+        }
+
+        #noBtn { background: #888; color: white; position: absolute; z-index: 11; transition: all 0.15s ease-out; }
+
+        /* Focus styles for keyboard navigation */
+        button:focus { outline: 3px solid rgba(214,51,132,0.18); transform: translateY(-2px); }
+
+        /* Ripple effect */
+        .ripple {
+            position: absolute;
+            border-radius: 50%;
+            transform: scale(0);
+            background: rgba(255,255,255,0.6);
+            animation: ripple 600ms linear;
+            pointer-events: none;
+        }
+        @keyframes ripple { to { transform: scale(6); opacity: 0; } }
+
+        /* Spinner for submit button */
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        .spinner {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-top-color: white;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin-right: 8px;
+            vertical-align: middle;
+        }
+        #submitDetails.loading { pointer-events: none; opacity: 0.85; }
+        #submitDetails.loading .spinner { display: inline-block; }
+        #submitDetails:not(.loading) .spinner { display: none; }
+
+        #date-form-container { display: none; text-align: left; }
+        label { display: block; margin: 10px 0 5px; color: #d63384; font-weight: bold; font-size: 0.95rem; }
+        input {
+            width: 100%;
+            padding: 12px;
+            border-radius: 12px;
+            border: 2px solid #fad0c4;
+            margin-bottom: 15px;
+            box-sizing: border-box;
+            font-size: 1rem;
+            transition: border-color 0.2s ease;
+        }
+        input:focus {
+            outline: none;
+            border-color: #ff4d80;
+            box-shadow: 0 0 0 3px rgba(255, 77, 128, 0.1);
+        }
+        #customMessage {
+            width: 100%;
+            padding: 12px;
+            border-radius: 12px;
+            border: 2px solid #fad0c4;
+            margin-bottom: 15px;
+            box-sizing: border-box;
+            font-size: 1rem;
+        }
+        #customMessageContainer {
+            display: block;
+            margin-top: 20px;
+        }
+        #submitDetails { width: 100%; background: var(--accent); color: white; margin-top: 10px; }
+        #final-thanks { display: none; }
+
+        /* Smooth fade/slide transitions */
+        .fade-enter { opacity: 0; transform: translateY(6px); }
+        .fade-enter-active { opacity: 1; transform: translateY(0); transition: opacity 320ms ease, transform 320ms ease; }
+        .fade-exit { opacity: 1; }
+        .fade-exit-active { opacity: 0; transition: opacity 220ms ease; }
+
+        /* Floating Hearts Animation */
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); opacity: 1; }
+            50% { transform: translateY(-20px) rotate(5deg); }
+            100% { transform: translateY(-100vh) rotate(360deg); opacity: 0; }
+        }
+        
+        .floating-heart {
+            position: fixed;
+            font-size: 2rem;
+            pointer-events: none;
+            z-index: 5;
+            animation: float 8s infinite ease-in;
+        }
+
+        /* Music Control */
+        #musicToggle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: rgba(214, 51, 132, 0.8);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            cursor: pointer;
+            font-size: 1.5rem;
+            z-index: 20;
+            transition: all 0.3s;
+        }
+        
+        #musicToggle:hover {
+            background: #d63384;
+            transform: scale(1.1);
+        }
+
+        /* Social Share Buttons */
+        .share-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .share-btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s;
+            color: white;
+            font-size: 0.9rem;
+        }
+        
+        .share-btn-whatsapp { background: linear-gradient(135deg, #25D366 0%, #1fad4f 100%); }
+        .share-btn-twitter { background: linear-gradient(135deg, #1DA1F2 0%, #0a7cff 100%); }
+        .share-btn-facebook { background: linear-gradient(135deg, #1877F2 0%, #0c5bbe 100%); }
+        .share-btn-copy { background: linear-gradient(135deg, #d63384 0%, #ff4d80 100%); }
+        
+        .share-btn:hover {
+            transform: scale(1.1);
+            opacity: 0.9;
+        }
+
+        /* Canvas background */
+        #bgCanvas {
+            position: fixed;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        /* Background toggle (small) */
+        #bgToggle {
+            background: rgba(255, 200, 230, 0.9);
+            color: #8b1f4a;
+            border: none;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            cursor: pointer;
+            font-size: 1.1rem;
+        }
+        #bgToggle:hover { transform: scale(1.06); }
+
+        .signature {
+            margin-top: 30px;
+            font-size: 0.9rem;
+            color: #d63384;
+            opacity: 0.8;
+            border-top: 1px solid #f0f0f0;
+            padding-top: 15px;
+            z-index: 12;
+            position: relative;
+        }
+    </style>
+</head>
+<body>
+    <!-- Background Music -->
+    <canvas id="bgCanvas"></canvas>
+    <audio id="bgMusic" loop>
+        <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" type="audio/mpeg">
+    </audio>
+    <div style="position:fixed; top:18px; right:18px; z-index:22; display:flex; gap:8px;">
+        <button id="musicToggle" title="Toggle Music">🔊</button>
+        <button id="bgToggle" title="Toggle Live Background">✨</button>
+    </div>
+
+    <div id="card">
+        <div id="main-content">
+            <video id="frontVideo" class="media-box" autoplay loop muted playsinline preload="metadata">
+                <source src="front-page-video.mp4" type="video/mp4">
+            </video>
+            <h1 id="mainHeading">Will you be my Valentine?</h1>
+            <div class="btn-container">
+                <button id="yesBtn" aria-label="Yes, I will" tabindex="0">Yes!</button>
+                <button id="noBtn" aria-label="No, I won't" tabindex="0">No</button>
+            </div>
+        </div>
+
+        <div id="date-form-container">
+            <!-- Lazy-loaded celebration video; source will be set when the form is shown -->
+            <video id="celebrationVideo" class="media-box" controls playsinline preload="none">
+                <source id="celebrationSource" data-src="success-video.mp4" type="video/mp4">
+            </video>
+            <h1 style="font-size: 1.5rem;">YAY! ❤️ Pick a time❤️</h1>
+            <form id="finalForm">
+                <input type="hidden" name="access_key" value="4c902e34-4285-4545-9fd7-d0ce0deb0954">
+                <input type="hidden" name="from_name" value="Valentine Website">
+                <input type="hidden" name="subject" value="URGENT: SHE PICKED A DATE! ❤️">
+                <label>Your Name:</label>
+                <input type="text" name="name" placeholder="What should I call you?" required>
+                <label>Your Email (optional):</label>
+                <input type="email" name="email" placeholder="your.email@example.com">                <label>Which Day?</label>
+                <input type="date" name="date" required>
+                <label>What Time?</label>
+                <input type="time" name="time" required>
+                <label>Special requests?</label>
+                <input type="text" name="notes" placeholder="chocolate, flowers,movie night, surprise me...">
+                <label>Your Message:</label>
+                <input type="text" name="customMessage" placeholder="Write your special message here...">
+                <button type="submit" id="submitDetails"><span class="spinner"></span>Confirm the Date!</button>
+            </form>
+        </div>
+
+        <div id="final-thanks">
+            <h1 style="font-size: 3rem;">🌹</h1>
+            <h1>It's a Date!</h1>
+            <p style="font-size: 1.05rem; line-height: 1.6;">
+                My heart is so full right now.<br>
+                I can't wait to see you. ✨
+            </p>
+            <p style="font-size: 0.9rem; color: #999; margin-top: 16px;">A confirmation email has been sent your way.</p>
+            <div class="share-buttons">
+                <button class="share-btn share-btn-whatsapp" onclick="shareOnWhatsApp()">📱 WhatsApp</button>
+                <button class="share-btn share-btn-twitter" onclick="shareOnTwitter()">𝕏 Twitter</button>
+                <button class="share-btn share-btn-facebook" onclick="shareOnFacebook()">f Facebook</button>
+                <button class="share-btn share-btn-copy" onclick="copyLink()">📋 Copy Link</button>
+            </div>
+        </div>
+
+        <div class="signature">
+            <p style="margin: 0; font-size: 0.85rem;">💝 Made with love by skinny.ke</p>
+            <p style="margin: 4px 0 0 0; font-size: 0.75rem; opacity: 0.6;">A romantic rose-themed Valentine surprise</p>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
+    <script>
+        // Enhanced interactions: accessibility, reduced-motion, personalization, lazy loads, and graceful form handling
+        const yesBtn = document.getElementById('yesBtn');
+        const noBtn = document.getElementById('noBtn');
+        const mainContent = document.getElementById('main-content');
+        const dateForm = document.getElementById('date-form-container');
+        const finalThanks = document.getElementById('final-thanks');
+        const celebVideo = document.getElementById('celebrationVideo');
+        const celebSource = document.getElementById('celebrationSource');
+        const bgMusic = document.getElementById('bgMusic');
+        const musicToggle = document.getElementById('musicToggle');
+        const frontVideo = document.getElementById('frontVideo');
+        const mainHeading = document.getElementById('mainHeading');
+        const finalForm = document.getElementById('finalForm');
+
+        const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+        // Personalization from URL params
+        (function applyURLParams(){
+            try{
+                const params = new URLSearchParams(window.location.search);
+                const pName = params.get('name');
+                const pMsg = params.get('message') || params.get('msg');
+                if(pName){
+                    const nameInput = document.querySelector('input[name="name"]');
+                    if(nameInput){ nameInput.value = decodeURIComponent(pName); }
+                    mainHeading.textContent = `Will you be my Valentine, ${decodeURIComponent(pName)}?`;
+                }
+                if(pMsg){
+                    const msgInput = document.querySelector('input[name="customMessage"]');
+                    if(msgInput) msgInput.value = decodeURIComponent(pMsg);
+                }
+            }catch(e){console.warn('URL param parse failed', e)}
+        })();
+
+        // Music preference persistence
+        let musicPlaying = localStorage.getItem('musicPlaying') === 'true';
+        if(musicPlaying){
+            bgMusic.play().catch(()=>{});
+            musicToggle.textContent = '🔊';
+        } else {
+            musicToggle.textContent = '🔇';
+        }
+        musicToggle.addEventListener('click', () => {
+            musicPlaying = !musicPlaying;
+            localStorage.setItem('musicPlaying', musicPlaying ? 'true' : 'false');
+            if(musicPlaying){ bgMusic.play().catch(()=>{}); musicToggle.textContent = '🔊'; }
+            else { bgMusic.pause(); musicToggle.textContent = '🔇'; }
+        });
+
+        // Keyboard activation helpers (Enter/Space)
+        function makeKeyboardClickable(el, cb){
+            el.addEventListener('keydown', (e) => { if(e.key === 'Enter' || e.key === ' ') { e.preventDefault(); cb(e); } });
+        }
+        makeKeyboardClickable(yesBtn, () => yesBtn.click());
+        makeKeyboardClickable(noBtn, () => noBtn.click());
+        makeKeyboardClickable(musicToggle, () => musicToggle.click());
+
+        // Ripple effect on buttons
+        document.addEventListener('click', (e) => {
+            const btn = e.target.closest('button');
+            if(!btn) return;
+            const rect = btn.getBoundingClientRect();
+            const ripple = document.createElement('span');
+            ripple.className = 'ripple';
+            const size = Math.max(rect.width, rect.height) * 1.2;
+            ripple.style.width = ripple.style.height = size + 'px';
+            ripple.style.left = (e.clientX - rect.left - size/2) + 'px';
+            ripple.style.top = (e.clientY - rect.top - size/2) + 'px';
+            btn.appendChild(ripple);
+            setTimeout(()=> ripple.remove(), 650);
+        });
+
+        // Live canvas background controls (existing implementation keeps performance limits)
+        const bgCanvas = document.getElementById('bgCanvas');
+        const bgToggle = document.getElementById('bgToggle');
+        const ctx = bgCanvas.getContext ? bgCanvas.getContext('2d') : null;
+        let particles = [];
+        let animId = null;
+        let spawnInterval = null;
+        const isMobile = window.innerWidth < 600;
+        let bgEnabled = localStorage.getItem('bgEnabled');
+        if (bgEnabled === null) bgEnabled = !isMobile; else bgEnabled = bgEnabled === 'true';
+        
+        // Device-specific tuning for particles
+        const particleConfig = isMobile ? {
+            maxParticles: 8,
+            spawnRate: 900,
+            minSize: 12,
+            maxSize: 20,
+            velocityX: 0.4,
+            velocityY: 0.5,
+            particleOpacity: 0.7
+        } : {
+            maxParticles: 36,
+            spawnRate: 280,
+            minSize: 14,
+            maxSize: 28,
+            velocityX: 0.6,
+            velocityY: 0.6,
+            particleOpacity: 0.85
+        };
+        
+        function resizeCanvas(){ if(!ctx) return; bgCanvas.width = window.innerWidth; bgCanvas.height = window.innerHeight; }
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+        
+        function spawnParticle(){
+            if(!ctx) return;
+            if(particles.length >= particleConfig.maxParticles) return;
+            const size = Math.random() * (particleConfig.maxSize - particleConfig.minSize) + particleConfig.minSize;
+            particles.push({
+                x: Math.random() * bgCanvas.width,
+                y: bgCanvas.height + size,
+                vx: (Math.random() - 0.5) * particleConfig.velocityX,
+                vy: -(Math.random() * particleConfig.velocityY + 0.5),
+                size,
+                alpha: particleConfig.particleOpacity * (Math.random() * 0.4 + 0.6),
+                rot: Math.random() * Math.PI * 2
+            });
+        }
+        
+        function drawParticle(p){
+            if(!ctx) return;
+            ctx.save();
+            ctx.translate(p.x, p.y);
+            ctx.rotate(p.rot);
+            ctx.globalAlpha = Math.max(0, Math.min(1, p.alpha));
+            ctx.fillStyle = 'rgba(255,77,128,0.95)';
+            ctx.font = `${p.size}px serif`;
+            ctx.textAlign = 'center';
+            ctx.fillText('🌹', 0, 0);
+            ctx.restore();
+        }
+        
+        function step(){
+            if(!ctx) return;
+            ctx.clearRect(0, 0, bgCanvas.width, bgCanvas.height);
+            for(let i = particles.length - 1; i >= 0; i--){
+                const p = particles[i];
+                p.x += p.vx;
+                p.y += p.vy;
+                p.rot += 0.01;
+                p.alpha -= 0.0018;
+                drawParticle(p);
+                if(p.y < -50 || p.alpha <= 0) particles.splice(i, 1);
+            }
+            animId = requestAnimationFrame(step);
+        }
+        
+        function startBg(){
+            if(!ctx || animId) return;
+            spawnInterval = setInterval(spawnParticle, particleConfig.spawnRate);
+            for(let i = 0; i < Math.ceil(particleConfig.maxParticles / 4); i++) spawnParticle();
+            animId = requestAnimationFrame(step);
+            bgToggle.textContent = '✨';
+            localStorage.setItem('bgEnabled', 'true');
+        }
+        
+        function stopBg(){
+            if(spawnInterval){ clearInterval(spawnInterval); spawnInterval = null; }
+            if(animId){ cancelAnimationFrame(animId); animId = null; }
+            particles = [];
+            if(ctx) ctx.clearRect(0, 0, bgCanvas.width, bgCanvas.height);
+            bgToggle.textContent = '🌑';
+            localStorage.setItem('bgEnabled', 'false');
+        }
+        
+        bgToggle.addEventListener('click', () => { if(animId) stopBg(); else startBg(); });
+        if(reduceMotion){ stopBg(); bgToggle.style.display = 'none'; }
+        else { if(bgEnabled) startBg(); else stopBg(); }
+
+        // Floating DOM hearts (small bursts) used for click interactions — rose-themed
+        function heartBurst(x, y, count = 8){
+            for(let i = 0; i < count; i++){
+                const el = document.createElement('div');
+                el.className = 'floating-heart';
+                el.textContent = '🌹';
+                el.style.fontSize = '1.2rem';
+                el.style.left = (x + (Math.random() - 0.5) * 100) + 'px';
+                el.style.top = (y + (Math.random() - 0.5) * 40) + 'px';
+                el.style.opacity = 1;
+                el.style.transform = `translateY(0) scale(1)`;
+                document.body.appendChild(el);
+                setTimeout(() => el.style.transform = `translateY(${-(140 + Math.random() * 140)}px) rotate(${Math.random() * 360}deg) scale(0.3)`, 20);
+                setTimeout(() => el.remove(), 4500);
+            }
+        }
+
+        // When user clicks "Yes" show form with smooth fade and lazy-load celebration video/source
+        yesBtn.addEventListener('click', () => {
+            mainContent.classList.add('fade-exit-active');
+            setTimeout(()=> mainContent.style.display='none', 280);
+            dateForm.style.display = 'block';
+            dateForm.classList.add('fade-enter-active');
+            // lazy-load celebration source
+            if(celebSource && celebSource.dataset && celebSource.dataset.src && (!celebSource.src || !celebSource.src.includes(celebSource.dataset.src))){
+                celebSource.src = celebSource.dataset.src;
+                try{ celebVideo.load(); }catch(e){}
+            }
+            try{ if(!reduceMotion){ celebVideo.muted = false; celebVideo.volume = 1.0; celebVideo.play().catch(()=>{}); confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 } }); } }
+            catch(e){}
+            for (let i = 0; i < 5; i++) { setTimeout(() => createFloatingHeart(), i * 150); }
+        });
+
+        // playful evasive "No" button interactions (accessible via keyboard too)
+        const moveNo = () => { const x = Math.random() * (window.innerWidth - noBtn.offsetWidth - 40); const y = Math.random() * (window.innerHeight - noBtn.offsetHeight - 40); noBtn.style.position = 'fixed'; noBtn.style.left = x + 'px'; noBtn.style.top = y + 'px'; };
+        noBtn.addEventListener('mouseover', moveNo);
+        noBtn.addEventListener('touchstart', (e)=>{ e.preventDefault(); moveNo(); });
+
+        // small helper used earlier
+        function createFloatingHeart(){ const heart = document.createElement('div'); heart.className='floating-heart'; heart.textContent='❤️'; heart.style.left = Math.random() * window.innerWidth + 'px'; heart.style.top = '-30px'; heart.style.animationDuration = (Math.random()*3 + 6) + 's'; document.body.appendChild(heart); setTimeout(()=> heart.remove(), 10000); }
+
+        // Accessible aria-live region for form messages
+        const statusRegion = document.createElement('div'); statusRegion.setAttribute('aria-live','polite'); statusRegion.setAttribute('role','status'); statusRegion.style.position='absolute'; statusRegion.style.left='-9999px'; statusRegion.style.width='1px'; document.body.appendChild(statusRegion);
+
+        // Form submission with loading state, error handling and confirmation-email send
+        finalForm.addEventListener('submit', async function(e){
+            e.preventDefault();
+            const btn = document.getElementById('submitDetails');
+            if(btn.disabled) return; // prevent double
+            btn.disabled = true;
+            btn.classList.add('loading');
+            btn.innerText = 'Sending your love...';
+            statusRegion.textContent = 'Sending your details — please wait.';
+
+            const formData = new FormData(this);
+            const userEmail = formData.get('email');
+
+            try{
+                const res = await fetch('https://api.web3forms.com/submit', { method:'POST', body: formData });
+                if(!res.ok) throw new Error('Network response was not ok');
+
+                // send confirmation email to visitor if provided (best-effort)
+                if(userEmail){
+                    try{
+                        const confirmationData = new FormData();
+                        confirmationData.append('access_key','4c902e34-4285-4545-9fd7-d0ce0deb0954');
+                        confirmationData.append('to_email', userEmail);
+                        confirmationData.append('from_name','💕 Valentine');
+                        confirmationData.append('subject','✨ Your Valentine\'s Date is Confirmed!');
+                        const visitorName = formData.get('name') || 'lovely heart';
+                        const chosenDate = formData.get('date') || 'soon';
+                        const chosenTime = formData.get('time') || 'a special moment';
+                        confirmationData.append('message', `Hi ${visitorName},\n\n💕 Your date is officially confirmed!\n\nDate: ${chosenDate}\nTime: ${chosenTime}\n\nGet ready for something special... I can't wait to see you! 🌹\n\nWith all my love,\n${window.location.hostname}`);
+                        fetch('https://api.web3forms.com/submit', { method:'POST', body: confirmationData }).catch(()=>{});
+                    }catch(err){ console.warn('Confirmation email send failed', err); }
+                }
+
+                // success
+                dateForm.style.display = 'none';
+                finalThanks.style.display = 'block';
+                statusRegion.textContent = 'Your date has been scheduled — confirmation sent.';
+                if(!reduceMotion) confetti({ particleCount: 200, spread: 100 });
+                // heart burst near center of screen
+                heartBurst(window.innerWidth/2, window.innerHeight/2, 12);
+            }catch(err){
+                console.error(err);
+                statusRegion.textContent = 'Sorry — something went wrong. Please try again.';
+                alert('There was a problem sending your details. Please try again.');
+                btn.disabled = false;
+                btn.classList.remove('loading');
+                btn.innerText = 'Confirm the Date!';
+                btn.removeAttribute('aria-busy');
+                return;
+            }
+        });
+
+        // Social Sharing functions (unchanged) — keep simple and lightweight
+        function shareOnWhatsApp(){ const text = "I just said YES to a Valentine's date! Check this out: " + window.location.href; window.open('https://api.whatsapp.com/send?text=' + encodeURIComponent(text), '_blank'); }
+        function shareOnTwitter(){ const text = "I just said YES to a Valentine's date! 💕 Check this out!"; window.open('https://twitter.com/intent/tweet?text=' + encodeURIComponent(text) + '&url=' + window.location.href, '_blank'); }
+        function shareOnFacebook(){ window.open('https://www.facebook.com/sharer/sharer.php?u=' + window.location.href, '_blank'); }
+        function copyLink(){ navigator.clipboard.writeText(window.location.href).then(()=> alert('Link copied to clipboard! 💕')).catch(()=>{}); }
+    </script>
+</body>
+</html>
