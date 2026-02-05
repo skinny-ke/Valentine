@@ -11,6 +11,74 @@
             --card-bg: rgba(255,255,255,0.96);
             --text: #3a0b2e;
             --action: #ff4d80;
+            --bg-primary: #ff9a9e;
+            --bg-secondary: #fad0c4;
+        }
+
+        /* Theme definitions */
+        [data-theme="rose"] {
+            --accent: #d63384;
+            --action: #ff4d80;
+            --card-bg: rgba(255,255,255,0.96);
+            --text: #3a0b2e;
+            --bg-primary: #ff9a9e;
+            --bg-secondary: #fad0c4;
+        }
+        [data-theme="rose-dark"] {
+            --accent: #ff6f9f;
+            --action: #ff8fa3;
+            --card-bg: rgba(30,15,25,0.96);
+            --text: #ffccdd;
+            --bg-primary: #4a1a3a;
+            --bg-secondary: #662d4d;
+        }
+        [data-theme="sapphire"] {
+            --accent: #1e5a96;
+            --action: #0d7cc4;
+            --card-bg: rgba(240,248,255,0.96);
+            --text: #0a2f54;
+            --bg-primary: #a0c4e8;
+            --bg-secondary: #7db3d9;
+        }
+        [data-theme="sapphire-dark"] {
+            --accent: #4a9fd8;
+            --action: #6ab4ff;
+            --card-bg: rgba(15,30,50,0.96);
+            --text: #b0d4ff;
+            --bg-primary: #0d2a4a;
+            --bg-secondary: #1a3f5f;
+        }
+        [data-theme="sunset"] {
+            --accent: #d97706;
+            --action: #f97316;
+            --card-bg: rgba(255,250,240,0.96);
+            --text: #78350f;
+            --bg-primary: #fed7aa;
+            --bg-secondary: #fecaca;
+        }
+        [data-theme="sunset-dark"] {
+            --accent: #fb923c;
+            --action: #fdba74;
+            --card-bg: rgba(40,20,5,0.96);
+            --text: #fed7aa;
+            --bg-primary: #7c2d12;
+            --bg-secondary: #a16207;
+        }
+        [data-theme="retro"] {
+            --accent: #c1121f;
+            --action: #e63946;
+            --card-bg: rgba(255,250,235,0.96);
+            --text: #333333;
+            --bg-primary: #f1dadc;
+            --bg-secondary: #fce1e4;
+        }
+        [data-theme="retro-dark"] {
+            --accent: #ff6b6b;
+            --action: #ff8787;
+            --card-bg: rgba(25,25,35,0.96);
+            --text: #f0f0f0;
+            --bg-primary: #5a2a2a;
+            --bg-secondary: #7a3a3a;
         }
 
         /* Respect reduced motion preference */
@@ -24,12 +92,14 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            background: linear-gradient(-45deg, #ff9a9e, #fad0c4, #fbc2eb, #a1c4fd);
+            background: linear-gradient(-45deg, var(--bg-primary), var(--bg-secondary), var(--action), var(--accent));
             background-size: 400% 400%;
             animation: gradient 10s ease infinite;
             font-family: 'Arial Rounded MT Bold', 'Helvetica Neue', Arial, sans-serif;
             overflow-x: hidden;
             padding: 20px;
+            color: var(--text);
+            transition: background-color 0.4s ease;
         }
 
         @keyframes gradient {
@@ -60,7 +130,7 @@
         }
 
         h1 {
-            color: #d63384;
+            color: var(--accent);
             font-size: clamp(1.5rem, 6vw, 2.2rem);
             margin-bottom: 25px;
         }
@@ -127,7 +197,7 @@
         #submitDetails:not(.loading) .spinner { display: none; }
 
         #date-form-container { display: none; text-align: left; }
-        label { display: block; margin: 10px 0 5px; color: #d63384; font-weight: bold; font-size: 0.95rem; }
+        label { display: block; margin: 10px 0 5px; color: var(--accent); font-weight: bold; font-size: 0.95rem; }
         input {
             width: 100%;
             padding: 12px;
@@ -258,13 +328,54 @@
         .signature {
             margin-top: 30px;
             font-size: 0.9rem;
-            color: #d63384;
+            color: var(--accent);
             opacity: 0.8;
-            border-top: 1px solid #f0f0f0;
+            border-top: 1px solid var(--muted);
             padding-top: 15px;
             z-index: 12;
             position: relative;
         }
+
+        /* Quiz styles */
+        #quiz-container { display: none; text-align: center; }
+        .quiz-question { font-size: 1.3rem; margin: 20px 0; font-weight: bold; color: var(--accent); }
+        .quiz-options { display: flex; flex-direction: column; gap: 12px; margin: 20px 0; }
+        .quiz-btn { padding: 12px 24px; font-size: 1rem; background: var(--action); color: white; border: none; border-radius: 25px; cursor: pointer; transition: all 0.3s; }
+        .quiz-btn:hover { transform: translateY(-2px); opacity: 0.9; }
+        .quiz-result { font-size: 1.1rem; margin: 20px 0; font-style: italic; color: var(--accent); }
+
+        /* Countdown + Quotes styles */
+        #countdown-section { display: none; text-align: center; margin-top: 20px; }
+        .countdown-box { font-size: 2rem; font-weight: bold; color: var(--action); margin: 15px 0; font-family: 'Courier New', monospace; }
+        .quote-box { font-size: 0.95rem; font-style: italic; color: var(--text); margin: 15px 0; line-height: 1.5; padding: 15px; background: rgba(0,0,0,0.05); border-radius: 12px; }
+
+        /* Theme picker styles */
+        #themeToggle { 
+            position: fixed; 
+            top: 18px; 
+            left: 18px; 
+            background: rgba(214, 51, 132, 0.8); 
+            color: white; 
+            border: none; 
+            border-radius: 50%; 
+            width: 50px; 
+            height: 50px; 
+            cursor: pointer; 
+            font-size: 1.2rem; 
+            z-index: 20; 
+            transition: all 0.3s;
+        }
+        #themeToggle:hover { background: var(--accent); transform: scale(1.1); }
+        
+        .theme-menu { display: none; position: fixed; top: 75px; left: 18px; background: var(--card-bg); border-radius: 15px; padding: 12px; z-index: 21; box-shadow: 0 4px 15px rgba(0,0,0,0.2); }
+        .theme-menu.active { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+        .theme-btn { padding: 8px 12px; font-size: 0.85rem; border: 2px solid transparent; border-radius: 8px; cursor: pointer; transition: all 0.2s; font-weight: bold; }
+        .theme-btn:hover { transform: scale(1.05); }
+        .theme-btn.active { border-color: var(--accent); }
+        .theme-rose { background: linear-gradient(135deg, #ff9a9e, #fad0c4); }
+        .theme-sapphire { background: linear-gradient(135deg, #a0c4e8, #7db3d9); }
+        .theme-sunset { background: linear-gradient(135deg, #fed7aa, #fecaca); }
+        .theme-retro { background: linear-gradient(135deg, #f1dadc, #fce1e4); }
     </style>
 </head>
 <body>
@@ -277,8 +388,23 @@
         <button id="musicToggle" title="Toggle Music">🔊</button>
         <button id="bgToggle" title="Toggle Live Background">✨</button>
     </div>
+    <button id="themeToggle" title="🎨 Change Theme">🎨</button>
+    <div class="theme-menu" id="themeMenu">
+        <button class="theme-btn theme-rose active" onclick="setTheme('rose')">Rose</button>
+        <button class="theme-btn theme-sapphire" onclick="setTheme('sapphire')">Sapphire</button>
+        <button class="theme-btn theme-sunset" onclick="setTheme('sunset')">Sunset</button>
+        <button class="theme-btn theme-retro" onclick="setTheme('retro')">Retro</button>
+        <button class="theme-btn" onclick="toggleDarkMode()" style="grid-column:1/3; background: #333; color: white;">🌙 Dark Mode</button>
+    </div>
 
     <div id="card">
+        <div id="quiz-container">
+            <h1 style="margin-bottom:20px;">Love Quiz 💕</h1>
+            <p style="font-size:0.95rem; margin-bottom:20px;">A few playful questions first...</p>
+            <div id="quizContent"></div>
+            <button id="quizProceedBtn" onclick="proceedFromQuiz()" style="margin-top:20px; padding:12px 30px; background:var(--accent); color:white; border:none; border-radius:25px; font-size:1rem; cursor:pointer;">Continue 💕</button>
+        </div>
+
         <div id="main-content">
             <video id="frontVideo" class="media-box" autoplay loop muted playsinline preload="metadata">
                 <source src="front-page-video.mp4" type="video/mp4">
@@ -322,6 +448,11 @@
                 My heart is so full right now.<br>
                 I can't wait to see you. ✨
             </p>
+            <div id="countdown-section">
+                <p style="font-size: 0.9rem; margin-bottom: 10px;">Countdown to our date:</p>
+                <div class="countdown-box" id="countdownDisplay">Loading...</div>
+                <div class="quote-box" id="quoteDisplay">💕</div>
+            </div>
             <p style="font-size: 0.9rem; color: #999; margin-top: 16px;">A confirmation email has been sent your way.</p>
             <div class="share-buttons">
                 <button class="share-btn share-btn-whatsapp" onclick="shareOnWhatsApp()">📱 WhatsApp</button>
@@ -339,7 +470,118 @@
 
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
     <script>
-        // Enhanced interactions: accessibility, reduced-motion, personalization, lazy loads, and graceful form handling
+        // ===== THEME SYSTEM =====
+        const themes = ['rose', 'sapphire', 'sunset', 'retro'];
+        let currentTheme = localStorage.getItem('theme') || 'rose';
+        let isDarkMode = localStorage.getItem('darkMode') === 'true';
+
+        function setTheme(theme){
+            currentTheme = theme;
+            const fullTheme = isDarkMode ? `${theme}-dark` : theme;
+            document.documentElement.setAttribute('data-theme', fullTheme);
+            localStorage.setItem('theme', theme);
+            updateThemeButtons();
+        }
+
+        function toggleDarkMode(){
+            isDarkMode = !isDarkMode;
+            const fullTheme = isDarkMode ? `${currentTheme}-dark` : currentTheme;
+            document.documentElement.setAttribute('data-theme', fullTheme);
+            localStorage.setItem('darkMode', isDarkMode ? 'true' : 'false');
+        }
+
+        function updateThemeButtons(){
+            document.querySelectorAll('.theme-btn').forEach(btn => {
+                btn.classList.remove('active');
+                if(btn.textContent.toLowerCase().includes(currentTheme)) btn.classList.add('active');
+            });
+        }
+
+        // Initialize theme
+        setTheme(currentTheme);
+        document.getElementById('themeToggle').addEventListener('click', () => {
+            document.getElementById('themeMenu').classList.toggle('active');
+        });
+        document.addEventListener('click', (e) => {
+            if(!e.target.closest('#themeToggle') && !e.target.closest('#themeMenu')) {
+                document.getElementById('themeMenu').classList.remove('active');
+            }
+        });
+
+        // ===== LOVE QUIZ =====
+        const quizData = [
+            { q: 'What\'s your love language?', a: ['Words of Affirmation', 'Quality Time', 'Acts of Service', 'Physical Touch'] },
+            { q: 'Ideal date vibe?', a: ['Romantic Dinner', 'Adventure', 'Cozy Movie Night', 'Surprise Me!'] },
+            { q: 'How do you show love?', a: ['Sweet Messages', 'Thoughtful Gifts', 'Your Presence', 'All the Above'] }
+        ];
+        let quizAnswers = [];
+
+        function initQuiz(){
+            let html = '';
+            quizData.forEach((item, i) => {
+                html += `<div style="margin-bottom:20px;"><div class="quiz-question">${i+1}. ${item.q}</div>`;
+                item.a.forEach((ans, j) => {
+                    html += `<button class="quiz-btn" onclick="quizAnswers[${i}]=${j}">${ans}</button>`;
+                });
+                html += '</div>';
+            });
+            document.getElementById('quizContent').innerHTML = html;
+        }
+
+        function proceedFromQuiz(){
+            if(quizAnswers.length < quizData.length) {
+                alert('Please answer all questions! 💕');
+                return;
+            }
+            document.getElementById('quiz-container').style.display = 'none';
+            document.getElementById('main-content').style.display = 'block';
+            mainContent.classList.add('fade-enter-active');
+        }
+
+        // ===== COUNTDOWN + QUOTES =====
+        const loveQuotes = [
+            '💕 You make my heart skip a beat',
+            '🌹 Every moment with you is precious',
+            '✨ You\'re my greatest blessing',
+            '💑 Forever starts with you',
+            '🎁 Your smile lights up my world',
+            '🌟 Love looks like you',
+            '💘 You\'re my favorite person',
+            '🎵 My heart sings when I\'m with you'
+        ];
+
+        let countdownInterval = null;
+
+        function startCountdown(targetDate){
+            const dateObj = new Date(targetDate + 'T00:00:00').getTime();
+            if(isNaN(dateObj)) return;
+
+            document.getElementById('countdown-section').style.display = 'block';
+            
+            function updateCountdown(){
+                const now = new Date().getTime();
+                const distance = dateObj - now;
+                
+                if(distance < 0) {
+                    document.getElementById('countdownDisplay').textContent = 'It\'s Today! 🎉';
+                    return;
+                }
+                
+                const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+                const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                const mins = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+                document.getElementById('countdownDisplay').textContent = `${days}d ${hours}h ${mins}m`;
+                
+                const quote = loveQuotes[Math.floor(Math.random() * loveQuotes.length)];
+                document.getElementById('quoteDisplay').textContent = quote;
+            }
+            
+            updateCountdown();
+            if(countdownInterval) clearInterval(countdownInterval);
+            countdownInterval = setInterval(updateCountdown, 60000); // Update every minute
+        }
+
+        // ===== MAIN APP =====
         const yesBtn = document.getElementById('yesBtn');
         const noBtn = document.getElementById('noBtn');
         const mainContent = document.getElementById('main-content');
@@ -372,6 +614,10 @@
                 }
             }catch(e){console.warn('URL param parse failed', e)}
         })();
+
+        // Initialize quiz
+        initQuiz();
+        document.getElementById('quiz-container').style.display = 'block';
 
         // Music preference persistence
         let musicPlaying = localStorage.getItem('musicPlaying') === 'true';
@@ -591,6 +837,11 @@
                 dateForm.style.display = 'none';
                 finalThanks.style.display = 'block';
                 statusRegion.textContent = 'Your date has been scheduled — confirmation sent.';
+                
+                // Start countdown with chosen date
+                const chosenDate = formData.get('date');
+                if(chosenDate) startCountdown(chosenDate);
+                
                 if(!reduceMotion) confetti({ particleCount: 200, spread: 100 });
                 // heart burst near center of screen
                 heartBurst(window.innerWidth/2, window.innerHeight/2, 12);
